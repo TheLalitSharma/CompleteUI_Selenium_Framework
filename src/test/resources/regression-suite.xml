@@ -1,0 +1,21 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Regression Test Suite" parallel="methods" thread-count="3" verbose="1">
+    <listeners>
+        <listener class-name="com.medsky.automation.listeners.ExtentTestListener"></listener>
+        <listener class-name="com.medsky.automation.listeners.TestNGListener"></listener>
+    </listeners>
+
+    <test name="Login Tests">
+        <classes>
+            <class name="com.medsky.automation.tests.login.LoginTests"></class>
+            <class name="com.medsky.automation.tests.login.LogoutTests"></class>
+        </classes>
+    </test>
+    
+    <test name="Dashboard Tests">
+        <classes>
+            <class name="com.medsky.automation.tests.dashboard.ProductListingTests"></class>
+        </classes>
+    </test>
+
+</suite>

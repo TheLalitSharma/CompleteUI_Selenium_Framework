@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+
+    <!-- Properties for reusability -->
+    <Properties>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+        <Property name="LOG_PATTERN_COLORED">%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{[%t] %-5level}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue, TRACE=white} %style{%logger{36}}{cyan} - %msg%n</Property>
+        <Property name="LOG_DIR">./target/logs</Property>
+        <Property name="ARCHIVE_DIR">${LOG_DIR}/archive</Property>
+    </Properties>
+
+    <Appenders>
+
+        <!-- Console Appender with colored output -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN_COLORED}"/>
+        </Console>
+
+        <!-- File Appender - All logs -->
+        <RollingFile name="FileAppender"
+                     fileName="${LOG_DIR}/automation.log"
+                     filePattern="${ARCHIVE_DIR}/automation-%d{yyyy-MM-dd}-%i.log.gz"
+                     createOnDemand="false">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30" compressionLevel="9">
+                <Delete basePath="${ARCHIVE_DIR}" maxDepth="1">
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- File Appender - Error logs only -->
+        <RollingFile name="ErrorFileAppender"
+                     fileName="${LOG_DIR}/error.log"
+                     filePattern="${ARCHIVE_DIR}/error-%d{yyyy-MM-dd}-%i.log.gz"
+                     createOnDemand="false">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+
+        <!-- File Appender - Test execution logs -->
+        <RollingFile name="TestExecutionAppender"
+                     fileName="${LOG_DIR}/test-execution.log"
+                     filePattern="${ARCHIVE_DIR}/test-execution-%d{yyyy-MM-dd}-%i.log.gz"
+                     createOnDemand="false">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <!-- Async Appender for better performance -->
+        <Async name="AsyncFile" includeLocation="true">
+            <AppenderRef ref="FileAppender"/>
+        </Async>
+
+        <Async name="AsyncError" includeLocation="true">
+            <AppenderRef ref="ErrorFileAppender"/>
+        </Async>
+
+    </Appenders>
+
+    <Loggers>
+
+        <!-- Framework package loggers -->
+        <Logger name="com.automation" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AsyncFile"/>
+            <AppenderRef ref="AsyncError"/>
+        </Logger>
+
+        <!-- Test execution specific logger -->
+        <Logger name="com.automation.tests" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="TestExecutionAppender"/>
+            <AppenderRef ref="AsyncError"/>
+        </Logger>
+
+        <!-- BrowserStack API logger -->
+        <Logger name="com.automation.api" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AsyncFile"/>
+        </Logger>
+
+        <!-- Selenium WebDriver logger - reduce verbosity -->
+        <Logger name="org.openqa.selenium" level="WARN" additivity="false">
+            <AppenderRef ref="AsyncFile"/>
+        </Logger>
+
+        <!-- Apache HTTP Client - reduce verbosity -->
+        <Logger name="org.apache.http" level="WARN" additivity="false">
+            <AppenderRef ref="AsyncFile"/>
+        </Logger>
+
+        <!-- TestNG logger -->
+        <Logger name="org.testng" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AsyncFile"/>
+        </Logger>
+
+        <!-- Root logger -->
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AsyncFile"/>
+            <AppenderRef ref="AsyncError"/>
+        </Root>
+
+    </Loggers>
+
+</Configuration>
