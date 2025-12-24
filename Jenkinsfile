@@ -7,14 +7,25 @@ pipeline {
     }
 
     parameters {
-            choice(name: 'EXECUTION_ENV', choices: ['live', 'staging', 'test'], description: 'Select environment')
+            choice(
+                    name: 'EXECUTION_ENV',
+                    choices: ['live', 'staging', 'test'],
+                    description: 'Select environment'
+            )
+            choice(
+                    name: 'CHROME_NODE_COUNT',
+                    choices: ['2', '3', '4', '5'],
+                    description: 'Number of Chrome containers to spin up'
+            )
     }
 
     stages {
         stage('⚙️ Setup Infrastructure') {
             steps {
-                echo 'Starting Selenium Grid...'
-                sh 'docker compose up -d'
+                script {
+                    echo "Scaling Grid to ${params.CHROME_NODE_COUNT} nodes..."
+                    sh "docker compose up -d --scale chromium=${params.CHROME_NODE_COUNT}"
+                }
             }
         }
 
