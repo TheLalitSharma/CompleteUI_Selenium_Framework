@@ -6,6 +6,10 @@ pipeline {
         jdk 'JDK'
     }
 
+    parameters {
+            choice(name: 'EXECUTION_ENV', choices: ['live', 'staging', 'test'], description: 'Select environment')
+    }
+
     stages {
         stage('⚙️ Setup Infrastructure') {
             steps {
@@ -16,19 +20,33 @@ pipeline {
 
         stage('📢 Run Automation') {
             steps {
-                echo 'Executing Selenium Tests...'
-                sh 'mvn clean test'
+                withMaven(maven: 'mvn 3.6.3', jdk: 'JDK'){
+                    sh "mvn clean test -Denv=${params.EXECUTION_ENV} -Dmaven.test.failure.ignore=true"
+                }
             }
         }
     }
 
     post {
         always {
-            echo 'Stopping and cleaning up Grid...'
-            sh 'docker compose down'
+            script {
 
-            echo 'Archiving Test Reports...'
-            junit '**/target/surefire-reports/*.xml'
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'reports',
+                    reportFiles: 'ExtentReport.html',
+                    reportName: 'HTML Report'
+                ])
+
+                echo 'Stopping and cleaning up Grid...'
+                sh 'docker compose down'
+
+                echo 'Archiving Test Reports...'
+                junit '**/target/surefire-reports/*.xml'
+            }
+
         }
     }
 }
