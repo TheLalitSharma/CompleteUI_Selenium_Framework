@@ -24,4 +24,9 @@ public class LogoutTests extends BaseTest {
         Assert.assertTrue(loginPage.isLoginPageLoaded(), "Logout failed");
     }
 
+    @Test
+    public void TC_Logout_02() {
+        Assert.fail();
+    }
+
 }
