@@ -24,7 +24,7 @@ pipeline {
             steps {
                 script {
                     echo "Scaling Grid to ${params.CHROME_NODE_COUNT} nodes..."
-                    sh "docker compose up -d --scale chromium=${params.CHROME_NODE_COUNT}"
+                    sh "docker compose up -d --scale chrome=${params.CHROME_NODE_COUNT}"
                 }
             }
         }
