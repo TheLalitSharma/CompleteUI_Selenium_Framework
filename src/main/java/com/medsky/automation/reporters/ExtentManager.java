@@ -17,7 +17,7 @@ public class ExtentManager {
             sparkReporter.config().setReportName("Automation Test Results");
             sparkReporter.config().setDocumentTitle("Selenium TestNG Report");
             sparkReporter.config().setTheme(Theme.DARK);
-            //sparkReporter.config().setTimeStampFormat();
+            sparkReporter.config().setOfflineMode(true);
             logger.debug("Reporter config setup done");
 
             extentReport = new ExtentReports();
