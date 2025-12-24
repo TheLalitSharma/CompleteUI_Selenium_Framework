@@ -2,6 +2,7 @@ package com.medsky.automation.listeners;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
@@ -186,9 +187,13 @@ public class ExtentTestListener implements ITestListener {
 
     private void attachScreenshotIfAvailable(ExtentTest extentTest, String testName) {
         try {
-            String screenshotPath = ScreenshotUtils.takeScreenshotForExtentReport(testName);
-            if (screenshotPath != null && !screenshotPath.isEmpty()) {
-                extentTest.addScreenCaptureFromPath(screenshotPath);
+            // This now returns the Base64 string
+            String base64Data = ScreenshotUtils.takeScreenshotForExtentReport(testName);
+
+            if (!base64Data.isEmpty()) {
+                // Use MediaEntityBuilder for the most robust attachment
+                extentTest.fail("Failure Screenshot",
+                        MediaEntityBuilder.createScreenCaptureFromBase64String(base64Data).build());
             }
         } catch (Exception e) {
             logger.error("Failed to attach screenshot for test: {}", testName, e);

@@ -22,22 +22,25 @@ public class ScreenshotUtils {
     }
 
     public static String takeScreenshotForExtentReport(String testName) {
-        File extentReportDir = new File(EXTENT_REPORT_DIR);
         File screenshotDir = new File(SCREENSHOT_DIR);
-        boolean directoryExists = FileHelper.createDirectories(SCREENSHOT_DIR);
-        if(directoryExists) {
-            String currentTime = LocalDateTime.now().format(TIMESTAMP_FORMAT);
-            String screenshotFileName = testName + "_" + currentTime + ".png";
-            File screenshotFile = new File(screenshotDir, screenshotFileName);
-            File file = ((TakesScreenshot) DriverManager.getDriver()).getScreenshotAs(OutputType.FILE);
-            try {
-                FileUtils.copyFile(file, screenshotFile);
-            } catch (IOException e) {
-                logger.error("Unable to take screenshot", e);
-            }
-            return FileHelper.getRelativePath(extentReportDir, screenshotFile);
+        FileHelper.createDirectories(SCREENSHOT_DIR);
+
+        String currentTime = LocalDateTime.now().format(TIMESTAMP_FORMAT);
+        String fileName = testName + "_" + currentTime + ".png";
+        File destinationFile = new File(screenshotDir, fileName);
+
+        // 1. Capture as FILE (for physical record)
+        File sourceFile = ((TakesScreenshot) DriverManager.getDriver()).getScreenshotAs(OutputType.FILE);
+        try {
+            FileUtils.copyFile(sourceFile, destinationFile);
+            logger.info("Physical screenshot saved: " + destinationFile.getAbsolutePath());
+        } catch (IOException e) {
+            logger.error("Failed to save physical file", e);
         }
-        return null;
+
+        // 2. Capture as BASE64 (for the dynamic report)
+        String base64String = ((TakesScreenshot) DriverManager.getDriver()).getScreenshotAs(OutputType.BASE64);
+        return "data:image/png;base64," + base64String;
     }
 
     public static String takeScreenshot(String testName) {
