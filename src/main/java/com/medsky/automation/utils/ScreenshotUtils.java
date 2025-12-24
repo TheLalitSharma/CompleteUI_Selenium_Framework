@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 
 public class ScreenshotUtils {
     private static final Logger logger = LoggerFactory.getLogger(ScreenshotUtils.class);
-    private static final String SCREENSHOT_DIR = "target/screenshots";
+    private static final String SCREENSHOT_DIR = "screenshots";
     private static final String EXTENT_REPORT_DIR = "reports";
     private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SSS");
 
