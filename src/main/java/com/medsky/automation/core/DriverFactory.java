@@ -33,35 +33,29 @@ public final class DriverFactory {
             //Implementation of REMOTE EXECUTION
             String remoteURL = ConfigReader.getRemoteURL();
 
-            AbstractDriverOptions browserOptions;
+            AbstractDriverOptions<?> browserOptions;
 
             switch(browserName.toLowerCase()) {
 
-                case "chromium":
-                    WebDriverManager.chromiumdriver().setup();
-                    browserOptions = getChromeOptions();
-                    break;
-
                 case "firefox":
-                    WebDriverManager.firefoxdriver().setup();
                     browserOptions = getFirefoxOptions();
                     break;
 
                 case "safari":
-                    WebDriverManager.safaridriver().setup();
                     browserOptions = getSafariOptions();
                     break;
 
                 default:
-                    WebDriverManager.chromedriver().setup();
                     browserOptions = getChromeOptions();
+                    browserOptions.setCapability("browserName", "chrome");
                     break;
             }
 
             try {
+                logger.info("Connecting to Remote Grid: {} with browser: {}", remoteURL, browserName);
                 driver = new RemoteWebDriver(new URL(remoteURL), browserOptions);
             } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Invalid Remote URL: " + remoteURL, e);
             }
 
         } else {
@@ -95,22 +89,15 @@ public final class DriverFactory {
 
     private static ChromeOptions getChromeOptions(){
         ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--start-maximized");
         chromeOptions.addArguments(
-                "--start-maximized",
                 "--no-sandbox",
-                "--disable-dev-shm-usage",
-                "--disable-gpu",
-                "--disable-extensions",
-                "--disable-web-security",
-                "--allow-running-insecure-content",
-                "--ignore-certificate-errors",
-                "--incognito"
+                "--disable-dev-shm-usage"
         );
         if(ConfigReader.isHeadless()) {
             chromeOptions.addArguments("--headless=new");
         }
-        chromeOptions.setBrowserVersion("any");
+
+        chromeOptions.setPlatformName("LINUX");
         return chromeOptions;
     }
 
