@@ -48,7 +48,7 @@ pipeline {
                     echo "Scaling Grid to ${params.NODE_COUNT} ${params.BROWSER} nodes..."
                     sh "docker compose -f ${COMPOSE_FILE} up -d --scale ${params.BROWSER}=${params.NODE_COUNT}"
                     echo "Waiting for Grid to register nodes..."
-                    sh 'timeout 60s bash -c "until curl -s http://host.docker.internal:4444/status | grep -q \'"ready": true\'; do sleep 2; done"'
+                    sh "sleep 15"
                 }
             }
         }
