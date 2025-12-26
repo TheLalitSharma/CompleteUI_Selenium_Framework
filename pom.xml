@@ -27,6 +27,26 @@
     <suite.file>src/test/resources/regression-suite.xml</suite.file>
   </properties>
 
+  <profiles>
+    <profile>
+      <id>docker-grid</id>
+      <properties>
+        <gridURL>http://host.docker.internal:4444</gridURL>
+        <headless>true</headless>
+      </properties>
+    </profile>
+    <profile>
+      <id>local-grid</id>
+      <properties>
+        <gridURL>http://localhost:4444</gridURL>
+        <headless>false</headless>
+      </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+  </profiles>
+
   <dependencies>
     <!-- Selenium WebDriver -->
     <dependency>

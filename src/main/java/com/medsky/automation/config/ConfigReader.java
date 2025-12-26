@@ -118,11 +118,23 @@ public class ConfigReader {
 
     //Methods for common properties
     public static String getBrowserName(){
-        return getProperty("browser", "chrome");
+        String browser = System.getProperty("browser");
+
+        if(browser == null || browser.trim().isEmpty()) {
+            getProperty("browser", "chrome");
+        }
+
+        return browser;
     }
 
     public static String getRunMode(){
-        return getProperty("runMode", "local");
+        String runMode = System.getProperty("runMode");
+
+        if(runMode == null) {
+            runMode = getProperty("runMode", "local");
+        }
+
+        return runMode;
     }
 
     public static boolean isHeadless(){
@@ -145,12 +157,17 @@ public class ConfigReader {
         return getIntProperty("retryCount", 0);
     }
 
-    public static String getRemoteURL(String platform) {
-        switch(platform.toLowerCase()) {
-            case "aws": return "";
-            case "azure": return "";
-            case "grid": return "http://localhost:4444/wd/hub";
-            default: return "http://localhost:4444/wd/hub";
+    public static String getRemoteURL() {
+        String url = System.getProperty("gridURL");
+
+        if(url == null || url.isEmpty()) {
+            url = getProperty("gridURL");
         }
+
+        if(url == null || url.isEmpty()) {
+            url = "http://localhost:4444/wd/hub";
+        }
+
+        return url;
     }
 }

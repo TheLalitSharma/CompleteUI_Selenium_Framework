@@ -31,7 +31,7 @@ public final class DriverFactory {
 
         if(runMode.equalsIgnoreCase("remote")){
             //Implementation of REMOTE EXECUTION
-            String remoteURL = ConfigReader.getRemoteURL("grid");
+            String remoteURL = ConfigReader.getRemoteURL();
 
             AbstractDriverOptions browserOptions;
 
