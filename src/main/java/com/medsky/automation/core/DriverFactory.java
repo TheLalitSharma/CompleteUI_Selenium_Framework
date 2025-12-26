@@ -59,6 +59,7 @@ public final class DriverFactory {
             }
 
             try {
+                System.out.println("DEBUG: Connecting to Grid at: " + remoteURL);
                 driver = new RemoteWebDriver(new URL(remoteURL), browserOptions);
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
@@ -107,6 +108,9 @@ public final class DriverFactory {
                 "--ignore-certificate-errors",
                 "--incognito"
         );
+        if(ConfigReader.isHeadless()) {
+            chromeOptions.addArguments("--headless=new");
+        }
         return chromeOptions;
     }
 
