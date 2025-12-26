@@ -148,12 +148,10 @@
           <suiteXmlFiles>
             <suiteXmlFile>${suite.file}</suiteXmlFile>
           </suiteXmlFiles>
+          <redirectTestOutputToFile>false</redirectTestOutputToFile>
           <systemPropertyVariables>
             <gridURL>${gridURL}</gridURL>
             <runMode>${runMode}</runMode>
-          </systemPropertyVariables>
-          <redirectTestOutputToFile>false</redirectTestOutputToFile>
-          <systemPropertyVariables>
             <log4j.configurationFile>src/main/resources/log4j2.xml</log4j.configurationFile>
           </systemPropertyVariables>
         </configuration>
