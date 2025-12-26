@@ -1,6 +1,6 @@
 services:
   selenium-hub:
-    image: selenium/hub:latest
+    image: seleniarm/hub:latest
     container_name: selenium-hub
     ports:
       - "4442:4442"
@@ -8,7 +8,7 @@ services:
       - "4444:4444"
 
   chrome:
-    image: selenium/node-chromium:latest
+    image: seleniarm/node-chromium:latest
     profiles: ["chrome"]
     shm_size: 1gb
     depends_on:
@@ -20,7 +20,7 @@ services:
       - SE_NODE_MAX_SESSIONS=2
 
   firefox:
-    image: selenium/node-firefox:latest
+    image: seleniarm/node-firefox:latest
     profiles: ["firefox"]
     shm_size: 1gb
     depends_on:
