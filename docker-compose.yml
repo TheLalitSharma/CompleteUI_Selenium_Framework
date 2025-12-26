@@ -9,6 +9,7 @@ services:
 
   chrome:
     image: seleniarm/node-chromium:latest
+    profiles: ["chrome"]
     shm_size: 1gb
     depends_on:
       - selenium-hub
@@ -20,6 +21,7 @@ services:
 
   firefox:
     image: seleniarm/node-firefox:latest
+    profiles: ["firefox"]
     shm_size: 1gb
     depends_on:
       - selenium-hub
