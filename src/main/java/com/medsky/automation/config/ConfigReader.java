@@ -165,7 +165,7 @@ public class ConfigReader {
         }
 
         if(url == null || url.isEmpty()) {
-            url = "http://localhost:4444/wd/hub";
+            url = "http://localhost:4444";
         }
 
         return url;
