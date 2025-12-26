@@ -46,7 +46,7 @@ pipeline {
             steps {
                 script {
                     echo "Scaling Grid to ${params.NODE_COUNT} ${params.BROWSER} nodes..."
-                    sh "docker compose -f ${COMPOSE_FILE} up -d --scale ${params.BROWSER}=${params.NODE_COUNT}"
+                    sh "docker compose -f ${COMPOSE_FILE} --profile ${params.BROWSER} up -d --scale ${params.BROWSER}=${params.NODE_COUNT}"
                     echo "Waiting for Grid to register nodes..."
                     sh "sleep 15"
                 }

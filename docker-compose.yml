@@ -9,7 +9,6 @@ services:
 
   chrome:
     image: seleniarm/node-chromium:latest
-    platform: linux/amd64
     shm_size: 1gb
     depends_on:
       - selenium-hub
@@ -21,7 +20,6 @@ services:
 
   firefox:
     image: seleniarm/node-firefox:latest
-    platform: linux/amd64
     shm_size: 1gb
     depends_on:
       - selenium-hub
