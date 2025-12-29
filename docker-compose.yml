@@ -11,6 +11,7 @@ services:
     image: selenium/node-chromium:latest
     profiles: ["chrome"]
     shm_size: 1gb
+    network_mode: "host"
     depends_on:
       - selenium-hub
     environment:
@@ -23,6 +24,7 @@ services:
     image: selenium/node-firefox:latest
     profiles: ["firefox"]
     shm_size: 1gb
+    network_mode: "host"
     depends_on:
       - selenium-hub
     environment:
