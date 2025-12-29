@@ -18,7 +18,7 @@ pipeline {
         AWS_IP       = "13.50.249.217"
         AWS_USER     = "ec2-user"
         SSH_CRED_ID  = "aws-grid-key"
-        DOCKER_GRID_URL = 'http://localhost:4444' // Standard for Local Docker
+        DOCKER_GRID_URL = 'http://selenium-hub:4444' // Standard for Local Docker
     }
 
     stages {
