@@ -6,12 +6,18 @@ import com.aventstack.extentreports.reporter.configuration.Theme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 public class ExtentManager {
     private static final Logger logger = LoggerFactory.getLogger(ExtentManager.class);
     private static ExtentReports extentReport;
 
     public static ExtentReports getExtentReports() {
         if(extentReport == null) {
+            File folder = new File(System.getProperty("user.dir") + "/reports");
+            if (!folder.exists()) {
+                folder.mkdirs(); // This creates the directory if Docker/Linux hasn't yet
+            }
             String path = System.getProperty("user.dir") + "/reports/ExtentReport.html";
             ExtentSparkReporter sparkReporter = new ExtentSparkReporter(path);
             sparkReporter.config().setReportName("Automation Test Results");
