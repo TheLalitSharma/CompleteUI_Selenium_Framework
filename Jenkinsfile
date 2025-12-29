@@ -14,7 +14,7 @@ pipeline {
             )
             choice(
                     name: 'EXECUTION_PROFILE',
-                    choices: ['docker-grid', 'local-grid'],
+                    choices: ['docker-grid', 'local-grid', 'aws-grid'],
                     description: 'Select the Maven Profile for configuration (URL, Timeouts, etc.)'
             )
             choice(
@@ -24,7 +24,7 @@ pipeline {
                     )
             choice(
                     name: 'NODE_COUNT',
-                    choices: ['2', '3', '4', '5'],
+                    choices: ['1', '2', '3', '4', '5'],
                     description: 'Scale: Number of browser containers'
             )
     }
