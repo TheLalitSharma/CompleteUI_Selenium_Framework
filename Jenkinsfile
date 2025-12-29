@@ -46,7 +46,7 @@ pipeline {
                             sh "docker compose -f ${COMPOSE_FILE} down --remove-orphans"
                         } else if (params.EXECUTION_PROFILE == 'aws-grid') {
                             sshagent([env.SSH_CRED_ID]) {
-                                sh "ssh -o StrictHostKeyChecking=no ${env.AWS_USER}@${env.AWS_IP} 'docker compose f ${COMPOSE_FILE} down --remove-orphans'"
+                                sh "ssh -o StrictHostKeyChecking=no ${env.AWS_USER}@${env.AWS_IP} 'docker compose -f ${COMPOSE_FILE} down --remove-orphans'"
                             }
                         }
                     }
