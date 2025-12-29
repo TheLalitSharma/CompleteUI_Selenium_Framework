@@ -7,9 +7,7 @@ services:
       - "4443:4443"
       - "4444:4444"
     networks:
-      grid:
-        aliases:
-          - selenium-hub
+      - automation-network
 
   chrome:
     image: selenium/node-chromium:latest
@@ -23,7 +21,7 @@ services:
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
       - SE_NODE_MAX_SESSIONS=2
     networks:
-      - grid
+      - automation-network
 
   firefox:
     image: selenium/node-firefox:latest
@@ -37,8 +35,8 @@ services:
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
       - SE_NODE_MAX_SESSIONS=2
     networks:
-      - grid
+      - automation-network
 
 networks:
-  grid:
-    driver: bridge
+  automation-network:
+    external: true
