@@ -33,7 +33,7 @@ pipeline {
             COMPOSE_FILE = 'docker-compose.yml'
             AWS_IP = "13.50.249.217"
             AWS_USER = "ec2-user"
-            SSH_KEY_ID = "aws-grid-key"
+            SSH_CRED_ID = "aws-grid-key"
             DOCKER_GRID_URL = 'http://host.docker.internal:4444'
     }
 
