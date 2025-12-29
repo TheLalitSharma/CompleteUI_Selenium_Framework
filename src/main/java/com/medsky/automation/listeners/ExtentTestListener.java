@@ -17,6 +17,7 @@ import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -142,6 +143,9 @@ public class ExtentTestListener implements ITestListener {
             logger.warn("Cleaning up {} orphaned test entries in onFinish.", testMap.size());
             testMap.clear();
         }
+
+        System.out.println("REAL REPORT PATH: " + new File(ExtentManager.getReportPath()).getAbsolutePath());
+        logger.info("REAL REPORT PATH: " + new File(ExtentManager.getReportPath()).getAbsolutePath());
 
         extentReports.flush();
         test.remove();

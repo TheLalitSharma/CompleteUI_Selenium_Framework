@@ -11,6 +11,7 @@ import java.io.File;
 public class ExtentManager {
     private static final Logger logger = LoggerFactory.getLogger(ExtentManager.class);
     private static ExtentReports extentReport;
+    private static String path;
 
     public static ExtentReports getExtentReports() {
         if(extentReport == null) {
@@ -18,7 +19,7 @@ public class ExtentManager {
             if (!folder.exists()) {
                 folder.mkdirs(); // This creates the directory if Docker/Linux hasn't yet
             }
-            String path = System.getProperty("user.dir") + "/reports/ExtentReport.html";
+            path = System.getProperty("user.dir") + "/reports/ExtentReport.html";
             ExtentSparkReporter sparkReporter = new ExtentSparkReporter(path);
             sparkReporter.config().setReportName("Automation Test Results");
             sparkReporter.config().setDocumentTitle("Selenium TestNG Report");
@@ -35,5 +36,9 @@ public class ExtentManager {
             extentReport.setSystemInfo("Tester Name", "Lalit Sharma");
         }
         return extentReport;
+    }
+
+    public static String getReportPath() {
+        return path;
     }
 }
