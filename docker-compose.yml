@@ -2,6 +2,7 @@ services:
   selenium-hub:
     image: selenium/hub:latest
     container_name: selenium-hub
+    network_mode: "host"
     ports:
       - "4442:4442"
       - "4443:4443"
