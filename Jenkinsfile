@@ -10,27 +10,31 @@ pipeline {
             choice(
                     name: 'EXECUTION_ENV',
                     choices: ['live', 'staging', 'test'],
-                    description: 'Select environment'
+                    description: 'Target App Environment'
             )
             choice(
                     name: 'EXECUTION_PROFILE',
-                    choices: ['docker-grid', 'local-grid', 'aws-grid'],
-                    description: 'Select the Maven Profile for configuration (URL, Timeouts, etc.)'
+                    choices: ['docker-grid', 'local', 'aws-grid'],
+                    description: 'Where to run?'
             )
             choice(
-                        name: 'BROWSER',
-                        choices: ['chrome', 'firefox'],
-                        description: 'Target Browser'
+                    name: 'BROWSER',
+                    choices: ['chrome', 'firefox'],
+                    description: 'Target Browser'
                     )
             choice(
                     name: 'NODE_COUNT',
                     choices: ['1', '2', '3', '4', '5'],
-                    description: 'Scale: Number of browser containers'
+                    description: 'Docker Grid only'
             )
     }
 
     environment {
             COMPOSE_FILE = 'docker-compose.yml'
+            AWS_IP = "13.50.249.217"
+            AWS_USER = "ec2-user"
+            SSH_KEY_ID = "aws-grid-key"
+            DOCKER_GRID_URL = 'http://host.docker.internal:4444'
     }
 
     stages {
@@ -38,17 +42,39 @@ pipeline {
                 steps {
                     script {
                         echo "Cleaning up previous docker containers..."
-                        sh "docker compose -f ${COMPOSE_FILE} down"
+                        if (params.EXECUTION_PROFILE == 'docker-grid') {
+                            sh "docker compose -f ${COMPOSE_FILE} down --remove-orphans"
+                        } else if (params.EXECUTION_PROFILE == 'aws-grid') {
+                            sshagent([env.SSH_CRED_ID]) {
+                                sh "ssh -o StrictHostKeyChecking=no ${env.AWS_USER}@${env.AWS_IP} 'docker compose f ${COMPOSE_FILE} down --remove-orphans'"
+                            }
+                        }
                     }
                 }
             }
         stage('⚙️ Setup Infrastructure') {
             steps {
                 script {
-                    echo "Scaling Grid to ${params.NODE_COUNT} ${params.BROWSER} nodes..."
-                    sh "docker compose -f ${COMPOSE_FILE} --profile ${params.BROWSER} up -d --scale ${params.BROWSER}=${params.NODE_COUNT}"
-                    echo "Waiting for Grid to register nodes..."
-                    sh "sleep 15"
+                    if (params.EXECUTION_PROFILE == 'docker-grid') {
+                                            echo "Provisioning Docker Grid Infrastructure..."
+                                            sh "docker compose -f ${COMPOSE_FILE} --profile ${params.BROWSER} up -d --scale ${params.BROWSER}=${params.NODE_COUNT}"
+                    } else if (params.EXECUTION_PROFILE == 'aws-grid') {
+                                              echo "Provisioning REMOTE AWS Infrastructure..."
+                                              sshagent([env.SSH_CRED_ID]) {
+                                                  sh "ssh ${env.AWS_USER}@${env.AWS_IP} 'docker compose -f ${COMPOSE_FILE} --profile ${params.BROWSER} up -d --scale ${params.BROWSER}=${params.NODE_COUNT}'"
+                                              }
+                                          }
+
+                    echo "Waiting for Grid Readiness..."
+                                def gridUrl = (params.EXECUTION_PROFILE == 'aws-grid') ? "http://${env.AWS_IP}:4444" : "${env.DOCKER_GRID_URL}"
+
+                                sh """
+                                    timeout 60s bash -c 'until curl -s ${gridUrl}/status | grep -q "\\"ready\\": true"; do
+                                        echo "Grid not ready yet... retrying in 2s"
+                                        sleep 2
+                                    done'
+                                """
+                                echo "Grid is UP and Nodes are registered!"
                 }
             }
         }
@@ -89,7 +115,13 @@ pipeline {
         cleanup {
             script {
                 echo 'Tearing down Infrastructure...'
-                sh "docker compose -f ${COMPOSE_FILE} down"
+                if (params.EXECUTION_PROFILE == 'docker-grid') {
+                                    sh "docker compose -f ${COMPOSE_FILE} down"
+                                } else if (params.EXECUTION_PROFILE == 'aws-grid') {
+                                    sshagent([env.SSH_CRED_ID]) {
+                                        sh "ssh ${env.AWS_USER}@${env.AWS_IP} 'docker compose -f ${COMPOSE_FILE} down'"
+                                    }
+                                }
             }
         }
     }
