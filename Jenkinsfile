@@ -87,7 +87,7 @@ pipeline {
                 echo 'Generating Reports...'
                 publishHTML([
                     allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
-                    reportDir: 'reports', reportFiles: 'ExtentReport.html', reportName: 'HTML Report'
+                    reportDir: 'target/reports', reportFiles: 'ExtentReport.html', reportName: 'HTML Report'
                 ])
                 junit '**/target/surefire-reports/*.xml'
             }

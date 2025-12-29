@@ -14,7 +14,7 @@ public class ExtentManager {
 
     public static ExtentReports getExtentReports() {
         if(extentReport == null) {
-            File folder = new File(System.getProperty("user.dir") + "/reports");
+            File folder = new File(System.getProperty("user.dir") + "/target/reports");
             if (!folder.exists()) {
                 folder.mkdirs(); // This creates the directory if Docker/Linux hasn't yet
             }
