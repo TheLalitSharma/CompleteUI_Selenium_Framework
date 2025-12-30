@@ -40,3 +40,4 @@ services:
 networks:
   automation-network:
     driver: bridge
+    name: automation-network
