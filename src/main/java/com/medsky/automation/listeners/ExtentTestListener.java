@@ -144,9 +144,6 @@ public class ExtentTestListener implements ITestListener {
             testMap.clear();
         }
 
-        System.out.println("REAL REPORT PATH: " + new File(ExtentManager.getReportPath()).getAbsolutePath());
-        logger.info("REAL REPORT PATH: " + new File(ExtentManager.getReportPath()).getAbsolutePath());
-
         extentReports.flush();
         test.remove();
 
