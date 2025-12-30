@@ -83,7 +83,6 @@ pipeline {
     post {
         always {
             script {
-                sh "ls -R target/"
                 echo 'Generating Reports...'
                 publishHTML([
                     allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
