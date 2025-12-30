@@ -95,10 +95,10 @@ pipeline {
             script {
                 echo 'Tearing down Infrastructure...'
                 if (params.EXECUTION_PROFILE == 'docker-grid') {
-                    sh "docker compose -f ${env.COMPOSE_FILE} down"
+                    sh "docker compose -f ${env.COMPOSE_FILE} --profile ${params.BROWSER} down"
                 } else if (params.EXECUTION_PROFILE == 'aws-grid') {
                     sshagent([env.SSH_CRED_ID]) {
-                        sh "ssh ${env.AWS_USER}@${env.AWS_IP} 'docker compose -f ${env.COMPOSE_FILE} down'"
+                        sh "ssh ${env.AWS_USER}@${env.AWS_IP} 'docker compose -f ${env.COMPOSE_FILE} --profile ${params.BROWSER} down'"
                     }
                 }
             }
