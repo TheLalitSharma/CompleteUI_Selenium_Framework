@@ -43,6 +43,9 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: 🛠️Create Shared Network
+        run: docker network create automation-network
+
       - name: 🐳 Start Selenium Grid (Docker Compose)
         run: |
           docker compose up -d --scale ${{ github.event.inputs.browser || 'chrome' }}=${{ github.event.inputs.node_count || 2 }} selenium-hub ${{ github.event.inputs.browser || 'chrome' }}

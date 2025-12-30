@@ -47,6 +47,18 @@
         <activeByDefault>true</activeByDefault>
       </activation>
     </profile>
+    <profile>
+      <id>aws-grid</id>
+      <properties>
+        <!-- The AWS URL is not static. It changes when AWS EC2 instance is restarted.
+        URL can be made permanent by allocating Elastic IP which is chargeable fir holding
+        the IP if instance is not in use.
+        -->
+        <gridURL>http://13.50.249.217:4444</gridURL>
+        <runMode>remote</runMode>
+        <headless>true</headless>
+      </properties>
+    </profile>
   </profiles>
 
   <dependencies>
