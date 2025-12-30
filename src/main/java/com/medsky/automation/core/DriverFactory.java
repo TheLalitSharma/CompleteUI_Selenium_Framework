@@ -24,7 +24,7 @@ public final class DriverFactory {
 
     public static WebDriver initDriver(String browserName){
 
-        WebDriver driver = null;
+        WebDriver driver;
 
         String runMode = ConfigReader.getRunMode();
         logger.info("Initializing driver with run mode: {}", runMode);
@@ -89,15 +89,18 @@ public final class DriverFactory {
 
     private static ChromeOptions getChromeOptions(){
         ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments(
-                "--no-sandbox",
-                "--disable-dev-shm-usage"
-        );
-        if(ConfigReader.isHeadless()) {
-            chromeOptions.addArguments("--headless=new");
-        }
+        if(ConfigReader.getRunMode().equalsIgnoreCase("remote")) {
+            chromeOptions.addArguments(
+                    "--no-sandbox",
+                    "--disable-dev-shm-usage"
+            );
+            if(ConfigReader.isHeadless()) {
+                chromeOptions.addArguments("--headless=new");
+            }
 
-        chromeOptions.setPlatformName("LINUX");
+            chromeOptions.setPlatformName("LINUX");
+        } else
+            chromeOptions.addArguments("--incognito");
         return chromeOptions;
     }
 

@@ -19,7 +19,7 @@ public class ExtentManager {
             if (!folder.exists()) {
                 folder.mkdirs(); // This creates the directory if Docker/Linux hasn't yet
             }
-            path = System.getProperty("user.dir") + "/reports/ExtentReport.html";
+            path = System.getProperty("user.dir") + "/target/reports/ExtentReport.html";
             ExtentSparkReporter sparkReporter = new ExtentSparkReporter(path);
             sparkReporter.config().setReportName("Automation Test Results");
             sparkReporter.config().setDocumentTitle("Selenium TestNG Report");
