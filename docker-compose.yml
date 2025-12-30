@@ -39,4 +39,4 @@ services:
 
 networks:
   automation-network:
-    external: true
+    driver: bridge
