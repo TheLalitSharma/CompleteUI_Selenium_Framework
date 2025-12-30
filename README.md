@@ -1,338 +1,269 @@
-# CompleteUI Selenium Framework
+## CompleteUI Selenium Framework
 
-A comprehensive, production-ready Selenium WebDriver automation framework built with Java, TestNG, and Maven. This framework provides a robust foundation for UI automation testing with support for multiple browsers, environments, and execution modes.
+**CompleteUI Selenium Framework** is a clean, production‑ready UI automation framework built from the ground up with **Java**, **Selenium WebDriver**, **TestNG**, and **Maven**.  
+It is designed as a starter kit for modern UI test automation: opinionated where it matters, but easy to extend for your own project.
 
-## 🚀 Features
+---
 
-- **Multi-Browser Support**: Chrome, Firefox, and Safari
-- **Multi-Environment Support**: Local, Test, Staging, and Live environments
-- **Execution Modes**: Local and Remote (Selenium Grid) execution
-- **Page Object Model (POM)**: Maintainable and scalable test architecture
-- **ExtentReports Integration**: Rich HTML test reports with screenshots
-- **TestNG Framework**: Advanced test execution with parallel execution support
-- **Docker Support**: Selenium Grid setup using Docker Compose
-- **CI/CD Ready**: Jenkins pipeline configuration included
-- **Credential Management**: Secure credential handling with encryption support
-- **Comprehensive Logging**: Log4j2 integration for detailed test execution logs
-- **Retry Mechanism**: Automatic test retry on failure
-- **Screenshot Capture**: Automatic screenshot capture on test failures
-- **WebDriver Manager**: Automatic browser driver management
+### 🚀 Key Features
 
-## 📋 Prerequisites
+- **Multi‑browser execution**: Chrome, Firefox, Safari (local & remote)
+- **Multiple environments**: Local, Test, Staging, Live
+- **Local & Selenium Grid modes**: Switch via simple config (`runMode=local|remote`)
+- **Page Object Model (POM)**: Clean separation of test logic and UI interactions
+- **Rich reporting**: ExtentReports HTML report with screenshots
+- **Parallel execution**: TestNG suite with parallel methods
+- **Resilient tests**: Explicit waits, retry mechanism, screenshot on failure
+- **Centralized configuration**: Properties + YAML for env and credentials
+- **Logging**: Log4j2 + SLF4J for detailed debugging
+- **Docker & CI ready**: Docker Compose for Grid, Jenkins pipeline provided
 
-- **Java JDK 11** or higher
-- **Maven 3.6+**
-- **Docker** and **Docker Compose** (for remote execution)
-- **IDE** (IntelliJ IDEA, Eclipse, or VS Code)
+---
 
-## 🛠️ Technology Stack
+### 📋 Prerequisites
 
-- **Language**: Java 11
-- **Build Tool**: Maven
-- **Test Framework**: TestNG 7.11.0
-- **WebDriver**: Selenium 4.35.0
-- **Reporting**: ExtentReports 5.1.2
-- **Logging**: Log4j2 2.21.1
-- **Driver Management**: WebDriverManager 6.1.0
-- **Configuration**: Properties files and YAML
-- **Containerization**: Docker & Docker Compose
+- Java **11** or higher  
+- Maven **3.6+**  
+- Docker & Docker Compose (for Selenium Grid)  
+- Any Java IDE (IntelliJ IDEA, Eclipse, VS Code)
 
-## 📁 Project Structure
+---
 
+### 🛠 Tech Stack
+
+- **Language**: Java 11  
+- **Build**: Maven  
+- **Test Framework**: TestNG  
+- **WebDriver**: Selenium 4  
+- **Drivers**: WebDriverManager  
+- **Reporting**: ExtentReports  
+- **Logging**: Log4j2 + SLF4J  
+- **Containers**: Docker + Docker Compose  
+
+---
+
+### 📁 Project Layout
+
+```text
+src/
+  main/java/com/medsky/automation/
+    config/      # Config reader and environment helpers
+    core/        # DriverFactory, DriverManager
+    enums/       # Enums (e.g. user types)
+    listeners/   # TestNG + Extent listeners
+    managers/    # Credential and other managers
+    models/      # Data models
+    pages/       # Page Objects (BasePage, LoginPage, HomePage, ...)
+    reporters/   # ExtentReports setup
+    utils/       # Wait, screenshot, file, encryption, YAML, etc.
+
+  test/java/com/medsky/automation/tests/
+    BaseTest.java
+    login/       # Login test classes
+    dashboard/   # Dashboard/product tests
+
+  test/resources/
+    config/                  # *.properties per environment
+    regression-suite.xml     # TestNG suite
+
+docker-compose.yml           # Selenium Grid (hub + nodes)
+Jenkinsfile                  # Jenkins pipeline
+pom.xml                      # Maven configuration
 ```
-CompleteUI_Selenium_Framework/
-├── src/
-│   ├── main/
-│   │   └── java/
-│   │       └── com/medsky/automation/
-│   │           ├── config/          # Configuration management
-│   │           ├── core/            # Driver factory and manager
-│   │           ├── enums/           # Enumerations
-│   │           ├── listeners/       # TestNG and ExtentReports listeners
-│   │           ├── managers/        # Credential managers
-│   │           ├── models/          # Data models
-│   │           ├── pages/           # Page Object Model classes
-│   │           ├── reporters/       # ExtentReports setup
-│   │           └── utils/           # Utility classes
-│   └── test/
-│       ├── java/
-│       │   └── com/medsky/automation/tests/
-│       │       ├── BaseTest.java    # Base test class
-│       │       ├── login/           # Login test classes
-│       │       └── dashboard/       # Dashboard test classes
-│       └── resources/
-│           ├── config/              # Environment configuration files
-│           └── regression-suite.xml # TestNG suite configuration
-├── docker-compose.yml               # Docker Compose for Selenium Grid
-├── Jenkinsfile                      # Jenkins CI/CD pipeline
-└── pom.xml                          # Maven dependencies
 
-```
+---
 
-## ⚙️ Configuration
+### ⚙️ Configuration
 
-### Environment Configuration
+Environment configs live under `src/test/resources/config/`:
 
-The framework supports multiple environments. Configuration files are located in `src/test/resources/config/`:
+- `config.properties` – default/base config  
+- `config_local.properties` – local execution  
+- `config_test.properties` – test env  
+- `config_staging.properties` – staging env  
+- `config_live.properties` – production/live  
 
-- `config.properties` - Default configuration
-- `config_local.properties` - Local environment
-- `config_test.properties` - Test environment
-- `config_staging.properties` - Staging environment
-- `config_live.properties` - Live/production environment
-
-### Setting Up Configuration
-
-1. Update the `config.properties` file or create environment-specific files:
+Basic example:
 
 ```properties
 browser=chrome
-runMode=local
+runMode=local       # local | remote
 headless=false
 implicitWait=15
 explicitWait=25
-baseUrl=https://your-application-url.com
+baseUrl=https://your-app-url.com
 ```
 
-2. For remote execution, configure the Selenium Grid URL:
+For Selenium Grid:
 
 ```properties
 runMode=remote
 remoteURL=http://localhost:4444/wd/hub
 ```
 
-### Credentials Management
+**Credentials** are stored in `src/main/resources/credentials.yaml` and handled through a credentials manager with optional encryption.
 
-Credentials are stored in `src/main/resources/credentials.yaml`. The framework supports encrypted credentials using the `SmartCredentialsManager`.
+---
 
-## 🚀 Getting Started
-
-### 1. Clone the Repository
+### 🚀 Getting Started
 
 ```bash
 git clone <repository-url>
 cd CompleteUI_Selenium_Framework
-```
 
-### 2. Install Dependencies
-
-```bash
-mvn clean install
-```
-
-### 3. Run Tests Locally
-
-**Using Maven:**
-
-```bash
-# Run all tests
+# build & run all tests
 mvn clean test
+```
 
-# Run specific test class
+Run a specific test class:
+
+```bash
 mvn test -Dtest=LoginTests
+```
 
-# Run with specific environment
+Run against a specific environment:
+
+```bash
 mvn test -Denv=staging
 ```
 
-**Using TestNG Suite:**
+Use the TestNG suite:
 
 ```bash
 mvn test -Dsuite.file=src/test/resources/regression-suite.xml
 ```
 
-### 4. Run Tests with Docker (Remote Execution)
+---
 
-**Start Selenium Grid:**
+### 🌐 Remote Execution with Docker (Selenium Grid)
+
+Start Grid:
 
 ```bash
 docker-compose up -d
 ```
 
-**Verify Grid is Running:**
+Run tests with `runMode=remote`:
 
 ```bash
-# Check hub status
-open http://localhost:4444
-
-# Check grid console
-open http://localhost:4444/ui
-```
-
-**Run Tests:**
-
-```bash
-# Ensure config.properties has runMode=remote
 mvn clean test
 ```
 
-**Stop Selenium Grid:**
+Stop Grid:
 
 ```bash
 docker-compose down
 ```
 
-## 📊 Test Reports
+---
 
-### ExtentReports
+### 📊 Reports & Logs
 
-After test execution, ExtentReports are generated in:
-- `reports/ExtentReport.html`
-
-### TestNG Reports
-
-TestNG reports are available in:
-- `target/surefire-reports/`
-
-### Logs
-
-Execution logs are stored in:
-- `target/logs/automation.log`
-
-## 🔧 Framework Components
-
-### BaseTest
-
-All test classes extend `BaseTest`, which provides:
-- Driver initialization and cleanup
-- Environment configuration
-- Common test setup and teardown
-
-### Page Object Model
-
-Pages are located in `src/main/java/com/medsky/automation/pages/`:
-- `BasePage.java` - Base page with common methods
-- `LoginPage.java` - Login page actions
-- `HomePage.java` - Home page actions
-
-### Utilities
-
-Utility classes in `src/main/java/com/medsky/automation/utils/`:
-- `WaitUtils.java` - Explicit wait utilities
-- `ScreenshotUtils.java` - Screenshot capture
-- `FileHelper.java` - File operations
-- `YamlHelper.java` - YAML file operations
-- `EncryptionHelper.java` - Encryption utilities
-- `RetryProvider.java` - Test retry mechanism
-- `TestUtils.java` - General test utilities
-
-## 🐳 Docker Configuration
-
-The framework includes Docker Compose configuration for Selenium Grid:
-
-- **Selenium Hub**: Port 4444
-- **Chrome Node**: Supports Chrome/Chromium
-- **Firefox Node**: Supports Firefox
-
-To customize, edit `docker-compose.yml`.
-
-## 🔄 CI/CD Integration
-
-### Jenkins Pipeline
-
-The framework includes a `Jenkinsfile` for Jenkins CI/CD:
-
-```groovy
-pipeline {
-    agent any
-    stages {
-        stage('Setup Infrastructure') {
-            // Start Selenium Grid
-        }
-        stage('Run Automation') {
-            // Execute tests
-        }
-    }
-    post {
-        always {
-            // Cleanup and archive reports
-        }
-    }
-}
-```
-
-## 📝 Writing Tests
-
-### Example Test Class
-
-```java
-package com.medsky.automation.tests.login;
-
-import com.medsky.automation.tests.BaseTest;
-import com.medsky.automation.pages.LoginPage;
-import org.testng.annotations.Test;
-
-public class LoginTests extends BaseTest {
-    
-    @Test
-    public void testSuccessfulLogin() {
-        LoginPage loginPage = new LoginPage();
-        loginPage.enterUsername("testuser")
-                 .enterPassword("password")
-                 .clickLogin();
-        // Add assertions
-    }
-}
-```
-
-## 🔐 Security
-
-- Credentials are stored in YAML format
-- Support for encrypted credentials
-- Environment-specific configuration files
-- No hardcoded sensitive data
-
-## 📈 Best Practices
-
-1. **Page Object Model**: All page interactions are encapsulated in page classes
-2. **Base Test Class**: Common setup/teardown logic in BaseTest
-3. **Configuration Management**: Environment-specific configurations
-4. **Logging**: Comprehensive logging for debugging
-5. **Reporting**: Rich HTML reports with screenshots
-6. **Retry Mechanism**: Automatic retry for flaky tests
-7. **Parallel Execution**: TestNG parallel execution support
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **Driver not found**: Ensure WebDriverManager dependencies are resolved
-2. **Grid connection failed**: Verify Docker containers are running
-3. **Tests timeout**: Check wait times in configuration
-4. **Report not generated**: Verify ExtentReports dependencies
-
-### Debug Mode
-
-Enable debug logging by updating `log4j2.xml`:
-
-```xml
-<Logger name="com.medsky.automation" level="DEBUG"/>
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 👤 Author
-
-**MedSky Automation Team**
-
-## 🙏 Acknowledgments
-
-- Selenium WebDriver community
-- TestNG framework
-- ExtentReports team
-- WebDriverManager contributors
+- **ExtentReports**: `target/reports/ExtentReport.html`  
+- **TestNG reports**: `target/surefire-reports/`  
+- **Logs**: `target/logs/automation.log`  
 
 ---
 
-**Happy Testing! 🎉**
+### 🧩 Maven Profiles & Execution Modes
+
+This project uses **Maven profiles** to drive how and where tests run by wiring system properties into TestNG/Selenium:
+
+- **`local-grid`** (default)  
+  - `gridURL=http://localhost:4444`  
+  - `runMode=remote`, `headless=true`  
+  - Ideal for running against a local Selenium Grid (e.g. via `docker-compose`).  
+
+- **`docker-grid`**  
+  - `gridURL=http://host.docker.internal:4444`  
+  - `runMode=remote`, `headless=true`  
+  - Useful when the tests themselves are running in a Docker container and need to talk to a Grid on the host machine.  
+
+- **`aws-grid`**  
+  - `gridURL` points to a remote AWS Selenium Grid (EC2)  
+  - `runMode=remote`, `headless=true`  
+  - Demonstrates how to execute the same suite against cloud infrastructure.  
+
+Example commands:
+
+```bash
+# default profile (local-grid)
+mvn clean test
+
+# run against Docker-based Grid
+mvn clean test -P docker-grid
+
+# run against AWS Grid
+mvn clean test -P aws-grid
+```
+
+Under the hood, these profiles populate `gridURL` and `runMode` as system properties in the Surefire plugin, which are then consumed by `ConfigReader` and `DriverFactory` to decide **where** and **how** WebDriver instances are created.
+
+---
+
+### 🔧 Core Framework Pieces
+
+- **BaseTest** (`com.medsky.automation.tests.BaseTest`)  
+  - Sets up and tears down WebDriver  
+  - Logs environment, base URL, and browser  
+
+- **DriverFactory / DriverManager** (`com.medsky.automation.core`)  
+  - Handles local vs remote driver creation  
+  - Central place to change browser options/capabilities  
+
+- **Pages** (`com.medsky.automation.pages`)  
+  - `BasePage` with common helpers  
+  - `LoginPage`, `HomePage`, etc. implement flows and actions  
+
+- **Utils** (`com.medsky.automation.utils`)  
+  - `WaitUtils`, `ScreenshotUtils`, `FileHelper`, `YamlHelper`, `EncryptionHelper`, `RetryProvider`, `TestUtils`  
+
+---
+
+### 🔄 CI/CD
+
+A sample **Jenkins pipeline** (`Jenkinsfile`) is included:
+
+- Starts Selenium Grid using Docker Compose  
+- Runs `mvn clean test`  
+- Tears down the Grid  
+- Publishes JUnit/TestNG XML reports  
+
+You can plug this repository directly into Jenkins and point it at the `Jenkinsfile`.
+
+The project structure and Maven commands are also **GitHub Actions–friendly**: a typical workflow would:
+
+- Check out the code  
+- Set up Java and Maven cache  
+- (Optionally) start Selenium Grid using Docker  
+- Run the same Maven commands as above (`mvn clean test -P <profile>`)  
+- Upload `target/surefire-reports` and `target/reports/ExtentReport.html` as build artifacts  
+
+This makes it easy to showcase **local, Docker, and cloud (AWS) execution** off the same codebase in any CI system.
+
+---
+
+### 🐛 Troubleshooting
+
+- **Drivers not found**  
+  - Run `mvn dependency:tree` and ensure WebDriverManager is correctly resolved.  
+
+- **Cannot connect to Grid**  
+  - Check `docker ps` and verify hub + nodes are running.  
+
+- **No reports generated**  
+  - Make sure tests actually executed and verify ExtentReports/TestNG output paths.  
+
+- **Timeouts / flaky tests**  
+  - Tune `implicitWait` / `explicitWait` and consider adjusting waits in `WaitUtils`.  
+
+---
+
+### 📌 Notes
+
+- This repository is intended as a **template** for modern UI automation projects.  
+- Fork it, rename packages, and adapt pages/tests to your application under test.  
+
+**Happy testing!**
+
 
